@@ -7,9 +7,11 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        var port = builder.Configuration["PORT"];
 
         // Add services to the container.
         builder.Services.AddControllers();
+        builder.WebHost.UseUrls($"http://*:{port};http://localhost:3000");
         builder.Services.AddScoped<RecipeRepository>(provider => new RecipeRepository("Data Source=recipes.db"));
 
         var app = builder.Build();
