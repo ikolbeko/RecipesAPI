@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using Npgsql;
 using Dapper;
 
 namespace RecipesAPI;
@@ -14,32 +14,30 @@ public class RecipeRepository
 
     public IEnumerable<Recipe> GetAllRecipes()
     {
-        using (var connection = new SqliteConnection(connectionString))
+        using (var connection = new NpgsqlConnection(connectionString))
         {
             connection.Open();
-            return connection.Query<Recipe>("SELECT * FROM Recipes");
+            return connection.Query<Recipe>("SELECT * FROM recipes");
         }
     }
 
     public Recipe GetRecipeById(int id)
     {
-        using (var connection = new SqliteConnection(connectionString))
+        using (var connection = new NpgsqlConnection(connectionString))
         {
             connection.Open();
-            return connection.QuerySingleOrDefault<Recipe>("SELECT * FROM Recipes WHERE Id = @Id", new { Id = id });
+            return connection.QueryFirstOrDefault<Recipe>("SELECT * FROM recipes WHERE id = @Id", new { Id = id });
         }
     }
 
     public void AddRecipe(Recipe recipe)
     {
-        using (var connection = new SqliteConnection(connectionString))
+        using (var connection = new NpgsqlConnection(connectionString))
         {
             connection.Open();
-            connection.Execute(@"
-                INSERT INTO Recipes (Name, Ingredients, Instructions, PreparationTime, Category, ImageUrl)
-                VALUES (@Name, @Ingredients, @Instructions, @PreparationTime, @Category, @ImageUrl)",
-                recipe);
+            connection.Execute(@"INSERT INTO recipes (title, description, ingredients, instructions, image, category, created_at)
+                                    VALUES (@Title, @Description, @Ingredients, @Instructions, @Image, @Category, @CreatedAt)",
+                                    recipe);
         }
     }
 }
-
