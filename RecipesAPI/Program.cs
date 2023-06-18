@@ -34,6 +34,16 @@ public class Program
         // Add services to the container.
         builder.Services.AddControllers();
         builder.Services.AddScoped<RecipeRepository>(provider => new RecipeRepository("Data Source=recipes.db"));
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowSpecificOrigin",
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:8081")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
+        });
 
         var app = builder.Build();
 
@@ -43,6 +53,7 @@ public class Program
 
         app.UseAuthorization();
 
+        app.UseCors("AllowSpecificOrigin");
 
         app.MapControllers();
 
