@@ -6,6 +6,29 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        var connectionString = "Data Source=recipes.db";
+
+        using (var connection = new SqliteConnection(connectionString))
+        {
+            connection.Open();
+
+            var createTableQuery = @"
+                CREATE TABLE IF NOT EXISTS Recipes (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT NOT NULL,
+                    Ingredients TEXT NOT NULL,
+                    Instructions TEXT NOT NULL,
+                    PreparationTime TEXT NOT NULL,
+                    Category TEXT,
+                    ImageUrl TEXT
+                );";
+
+            using (var command = new SqliteCommand(createTableQuery, connection))
+            {
+                command.ExecuteNonQuery();
+            }
+        }
+
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
@@ -28,26 +51,3 @@ public class Program
 }
 
 
-/*
-var connectionString = "Data Source=recipes.db";
-
-        using (var connection = new SqliteConnection(connectionString))
-        {
-            connection.Open();
-
-            var createTableQuery = @"
-        CREATE TABLE IF NOT EXISTS Recipes (
-            Id INTEGER PRIMARY KEY AUTOINCREMENT,
-            Name TEXT NOT NULL,
-            Ingredients TEXT NOT NULL,
-            Instructions TEXT NOT NULL,
-            PreparationTime TEXT NOT NULL,
-            Category TEXT,
-            ImageUrl TEXT
-        );";
-
-            using (var command = new SqliteCommand(createTableQuery, connection))
-            {
-                command.ExecuteNonQuery();
-            }
-        }*/
