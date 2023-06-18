@@ -1,5 +1,6 @@
 ﻿using Npgsql;
 using Dapper;
+using dotenv.net;
 
 namespace RecipesAPI;
 
@@ -7,9 +8,17 @@ public class RecipeRepository
 {
     private readonly string connectionString;
 
-    public RecipeRepository(string connectionString)
+    public RecipeRepository()
     {
-        this.connectionString = connectionString;
+        DotEnv.Load();
+        this.connectionString = new NpgsqlConnectionStringBuilder
+        {
+            Host = Environment.GetEnvironmentVariable("PGHOST"),
+            Port = Convert.ToInt32(Environment.GetEnvironmentVariable("PGPORT")),
+            Database = Environment.GetEnvironmentVariable("PGDATABASE"),
+            Username = Environment.GetEnvironmentVariable("PGUSER"),
+            Password = Environment.GetEnvironmentVariable("PGPASSWORD"),
+        }.ConnectionString;
     }
 
     public IEnumerable<Recipe> GetAllRecipes()

@@ -1,3 +1,6 @@
+
+using Npgsql;
+
 namespace RecipesAPI;
 
 public class Program
@@ -8,8 +11,7 @@ public class Program
         
         // Add services to the container.
         builder.Services.AddControllers();
-        string connectionString = builder.Configuration.GetConnectionString("Database");
-        builder.Services.AddScoped(provider => new RecipeRepository(connectionString));
+        builder.Services.AddScoped(provider => new RecipeRepository());
 
         builder.Services.AddCors(options =>
         {
